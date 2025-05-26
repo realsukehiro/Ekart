@@ -1,0 +1,13 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: ekart
+  description: Ekart shopping cart application
+  annotations:
+    github.com/project-slug: realsukehiro/Ekart
+    jenkins.io/job-full-name: CI_Pipeline
+    sonarqube.org/project-key: shopping-cart
+spec:
+  type: service
+  lifecycle: experimental
+  owner: user:vijay
