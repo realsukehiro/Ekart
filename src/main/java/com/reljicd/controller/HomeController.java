@@ -6,6 +6,7 @@ import com.reljicd.util.Pager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -33,7 +34,7 @@ public class HomeController {
         // param. decreased by 1.
         int evalPage = (page.orElse(0) < 1) ? INITIAL_PAGE : page.get() - 1;
 
-        Page<Product> products = productService.findAllProductsPageable(new PageRequest(evalPage, 5));
+        Page<Product> products = productService.findAllProductsPageable(PageRequest.of(evalPage, 5, Sort.by("id")));
         Pager pager = new Pager(products);
 
         ModelAndView modelAndView = new ModelAndView();
