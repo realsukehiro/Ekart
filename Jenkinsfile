@@ -38,23 +38,24 @@ pipeline {
         }
         stage('SonarQube Analysis') {
             steps {
+                sleep time: 30, unit: 'SECONDS' // Wait 30 seconds
                 withSonarQubeEnv('SONARQUBE') {
-                    bat """
-                        "%SCANNER_HOME%\\bin\\sonar-scanner" -X ^
-                            -Dsonar.projectKey=shopping-cart ^
-                            -Dsonar.projectName=shopping-cart ^
-                            -Dsonar.host.url=http://localhost:9000 ^
-                            -Dsonar.login=%SONAR_TOKEN% ^
-                            -Dsonar.java.binaries=target/classes ^
-                            -Dsonar.sources=src/main/java ^
-                            -Dsonar.working.directory=.java
+                bat """
+                    "%SCANNER_HOME%\\bin\\sonar-scanner" -X ^
+                        -Dsonar.projectKey=shopping-cart ^
+                        -Dsonar.projectName=shopping-cart ^
+                        -Dsonar.host.url=http://localhost:8094 ^
+                        -Dsonar.login=%SONAR_TOKEN% ^
+                        -Dsonar.java.binaries=target/classes ^
+                        -Dsonar.sources=src/main/java ^
+                        -Dsonar.working.directory=.scannerwork
                     """
                 }
             }
         }
         stage('Check Scanner Output') {
             steps {
-                bat 'dir .java'
+                bat 'dir .scannerwork'
             }
         }
         stage('Build Application') {
@@ -64,7 +65,7 @@ pipeline {
         }
         stage('Build & Push Docker Image') {
             steps {
-                withDockerRegistry(credentialsId: DOCKER_CREDENTIALS, url: 'https://index.docker.io/v1/') {
+                withDockerRegistry(credentialsId: 'docker-hub-sukehiro03', url: 'https://index.docker.io/v1/') {
                     bat "docker build -t %DOCKER_IMAGE%:%DOCKER_TAG% -f docker/Dockerfile ."
                     bat "docker push %DOCKER_IMAGE%:%DOCKER_TAG%"
                 }
